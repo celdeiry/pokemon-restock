@@ -5,6 +5,10 @@ on:
     - cron: '*/15 * * * *'
   workflow_dispatch:
     inputs:
+      test_discord:
+        description: "Send a Discord test message"
+        required: false
+        default: "false"
       init:
         description: 'Force initialization (re-baseline all products without notifying)'
         type: boolean
@@ -88,6 +92,10 @@ jobs:
 
       - name: Install dependencies
         run: npm ci --prefer-offline
+
+      - name: Test Discord webhook
+        if: ${{ inputs.test_discord == 'true' }}
+        run: node notifier.js --test --channel discord
 
       - name: Run monitor
         id: monitor
